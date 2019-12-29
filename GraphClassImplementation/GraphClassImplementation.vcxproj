@@ -123,7 +123,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AirlineGraph.cpp" />
+    <ClCompile Include="Source.cpp" />
+    <ClCompile Include="graphtypes.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="graphtypes.h" />
