@@ -44,6 +44,22 @@ public:
 	void BFS(std::string startname);
 	void BFS(Node* startnode);
 	void VisitFunction1(Node* node);
+
+	struct GreaterPathLength
+	{
+		bool operator()(const std::vector<Arc*>& lhs, const std::vector<Arc*>& rhs) const
+		{
+			return getPathCost(lhs) > getPathCost(rhs);
+		}
+	};
+	std::vector<Arc*> findShortestPath(std::string start, std::string finish)
+	{
+		return findShortestPath(nodeMap[start], nodeMap[finish]);
+	}
+	std::vector<Arc*> findShortestPath(Node* start, Node* finish);
+	static int getPathCost(const std::vector<Arc*>& path);
+
+
 private:
 	void visitUsingDFS(Node* node);
 	void visitUsingBFS();

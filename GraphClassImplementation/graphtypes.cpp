@@ -1,5 +1,6 @@
 #include "graphtypes.h"
 #include <iostream>
+#include <queue>
 
 void SimpGraph::AddNode(std::string name)
 {
@@ -89,6 +90,49 @@ void SimpGraph::VisitFunction1(Node* node)
 {
 	std::cout << node->name << " visited.\n";
 }
+
+std::vector<SimpGraph::Arc*> SimpGraph::findShortestPath(Node* start, Node* finish)
+{
+	std::vector<Arc*> path;
+	std::priority_queue< std::vector<Arc*>, std::vector<std::vector<Arc*>>, GreaterPathLength> queue;
+	std::map<std::string, int> fixed;
+	while (start != finish)
+	{
+		if (fixed.find(start->name) == fixed.end())
+		{
+			fixed[start->name] = getPathCost(path);
+			for (Arc* arc : start->arcs)
+			{
+				if (fixed.find(arc->finish->name) == fixed.end())
+				{
+					path.push_back(arc);
+					queue.push(path);
+					path.pop_back();
+				}
+			}
+		}
+		if (queue.size() == 0)
+		{
+			path.clear();
+			return path;
+		}
+		path = queue.top(); queue.pop();
+		start = path[path.size() - 1]->finish;
+	}
+	return path;
+}
+
+int SimpGraph::getPathCost(const std::vector<Arc*>& path)
+{
+	int cost = 0;
+	for (Arc* arc : path)
+	{
+		cost += arc->cost;
+	}
+	return cost;
+}
+
+
 
 void SimpGraph::visitUsingDFS(Node* node)
 {

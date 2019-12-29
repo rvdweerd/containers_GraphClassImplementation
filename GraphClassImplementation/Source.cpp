@@ -1,4 +1,5 @@
 #include "graphtypes.h"
+#include <iostream>
 
 void Initialize(SimpGraph& graph)
 {
@@ -24,16 +25,41 @@ void Initialize(SimpGraph& graph)
 	graph.AddTwoWayConnection("Denver", "San Francisco", 954);
 	graph.AddTwoWayConnection("Portland", "San Francisco", 550);
 	graph.AddTwoWayConnection("Portland", "Seattle", 130);
-	graph.PrintAdjacencyList();
 }
 
 int main()
 {
 	SimpGraph graph;
 	Initialize(graph);
+	
+	std::cout << "Running some tests:\n";
+
+	std::cout << "\nPrinting the adjacency list\n";
 	graph.PrintAdjacencyList();
+
+	std::cout << "\nTraversing BFS, starting at Boston\n";
 	graph.BFS("Boston");
 
+	std::cout << "\nTraversing DFS, starting at Boston\n";
+	graph.DFS("Boston");
+
+	std::cout << "\nFinding shortest path from Denver to Atlanta\n";
+	int n = 0;
+	for (auto a : graph.findShortestPath("Denver", "Atlanta"))
+	{
+		std::cout << a->start->name << " -> " << a->finish->name << " (" << a->cost << ")\n";
+		n += a->cost;
+	}
+	std::cout << "total distance: " << n;
+
+	std::cout << "\n\nFinding shortest path from San Francisco to Boston\n";
+	n = 0;
+	for (auto a : graph.findShortestPath("San Francisco", "Boston"))
+	{
+		std::cout << a->start->name << " -> " << a->finish->name << " (" << a->cost << ")\n";
+		n += a->cost;
+	}
+	std::cout << "total distance: " << n;
+	
+	std::cin.get();
 }
-
-
