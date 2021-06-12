@@ -1,5 +1,7 @@
 #include "graphtypes.h"
 #include <iostream>
+#include <crtdbg.h>  
+#define _CRTDBG_MAP_ALLOC  
 
 void Initialize(SimpGraph& graph)
 {
@@ -34,23 +36,36 @@ void Initialize(SimpGraph& graph)
 	}
 }
 
-int main()
-{
+void Test1() {
 	SimpGraph graph;
 	Initialize(graph);
-	
-	std::cout << "Running some tests:\n";
 
 	std::cout << "\nPrinting the adjacency list\n";
 	graph.PrintAdjacencyList();
-	
+
 	std::cout << "\nFinding shortest path from (0,0) to (6,6)\n";
 	int n = 0;
-	for (auto a : graph.findShortestPath({0,0}, {6,6}))
+	for (auto a : graph.findShortestPath({ 0,0 }, { 6,6 }))
 	{
 		std::cout << a->start->name << " -> " << a->finish->name << " (" << a->cost << ")\n";
 		n += a->cost;
 	}
 	std::cout << "total distance: " << n;
+}
+
+int main()
+{
+	_CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE);
+	_CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDERR);
+	_CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_FILE);
+	_CrtSetReportFile(_CRT_ERROR, _CRTDBG_FILE_STDERR);
+	_CrtSetReportMode(_CRT_ASSERT, _CRTDBG_MODE_FILE);
+	_CrtSetReportFile(_CRT_ASSERT, _CRTDBG_FILE_STDERR);
+	
+	std::cout << "Running some tests:\n";
+	Test1();
+	
+	
+	_CrtDumpMemoryLeaks();
 	std::cin.get();
 }
