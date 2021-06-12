@@ -59,7 +59,7 @@ public:
 	void DFS(Node* startnode);
 	void BFS(std::pair<long long int, long long int> startcell);
 	void BFS(Node* startnode);
-	void VisitFunction1(Node* node);
+	void VisitedPrintFunction(Node* node);
 	void PlaceObstacle(std::pair<long long int, long long int> n);
 
 	struct GreaterPathLength

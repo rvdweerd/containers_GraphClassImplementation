@@ -1,4 +1,4 @@
-#include "graphtypes.h"
+#include "SimpleGraph.h"
 #include <iostream>
 #include <queue>
 
@@ -100,7 +100,7 @@ void SimpGraph::BFS(Node* startnode)
 	visitUsingBFS();
 }
 
-void SimpGraph::VisitedFunction(Node* node)
+void SimpGraph::VisitedPrintFunction(Node* node)
 {
 	std::cout << node->name << " visited.\n";
 }
@@ -150,7 +150,7 @@ void SimpGraph::visitUsingDFS(Node* node)
 {
 	if (visited.find(node) == visited.end())
 	{
-		VisitFunction1(node);
+		VisitedPrintFunction(node);
 		visited.insert(node);
 		for (Arc* a : node->arcs)
 		{
@@ -169,7 +169,7 @@ void SimpGraph::visitUsingBFS()
 	{
 		Node* nextnode = tovisit.front();
 		tovisit.pop();
-		VisitFunction1(nextnode);
+		VisitedPrintFunction(nextnode);
 
 		for (Arc* a : nextnode->arcs)
 		{

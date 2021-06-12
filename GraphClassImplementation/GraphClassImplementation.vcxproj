@@ -124,10 +124,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp" />
-    <ClCompile Include="graphtypes.cpp" />
+    <ClCompile Include="SimpleGraph.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="graphtypes.h" />
+    <ClInclude Include="SimpleGraph.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
