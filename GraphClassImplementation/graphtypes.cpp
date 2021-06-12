@@ -58,10 +58,10 @@ void SimpGraph::PrintAdjacencyList()
 {
 	for (Node* n : nodes)
 	{
-		std::cout << n->id << " (" << n->arcs.size() << ") -> ";
+		std::cout << n->name << " (" << n->arcs.size() << ") -> ";
 		for (Arc* a : n->arcs)
 		{
-			std::cout << a->finish->id << "(" << a->cost << "),";
+			std::cout << a->finish->name << "(" << a->cost << "),";
 		}
 		std::cout << std::endl;
 	}
