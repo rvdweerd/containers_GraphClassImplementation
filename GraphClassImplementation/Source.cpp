@@ -3,6 +3,31 @@
 #include <crtdbg.h>  
 #define _CRTDBG_MAP_ALLOC  
 
+struct MemoryAllocationMetrics {
+	uint32_t totalAllocated = 0;
+	uint32_t totalFreed = 0;
+	uint32_t currentMemoryUsage() {
+		return totalAllocated - totalFreed;
+	}
+};
+
+static MemoryAllocationMetrics s_memoryAllocationMetrics;
+static void PrintMemoryUsage() {
+	std::cout << "Memory usage: " << s_memoryAllocationMetrics.currentMemoryUsage() << " bytes.\n";
+}
+
+void* operator new(size_t size) {
+	//std::cout << "Allocating " << size << " bytes\n";
+	s_memoryAllocationMetrics.totalAllocated += size;
+	return malloc(size);
+}
+
+void operator delete(void* memory, size_t size)
+{
+	s_memoryAllocationMetrics.totalFreed += size;
+	free(memory);
+}
+
 void InitializeAsGrid(SimpGraph& graph, int width=3, int height=3)
 {
 	for (int x = 0; x < width;x++) {
@@ -37,7 +62,7 @@ void InitializeAsGrid(SimpGraph& graph, int width=3, int height=3)
 void Test1() {
 	SimpGraph graph;
 	InitializeAsGrid(graph,7,7);
-
+	PrintMemoryUsage();
 	std::cout << "\nPrinting the adjacency list\n";
 	graph.PrintAdjacencyList();
 
@@ -67,7 +92,8 @@ int main()
 	
 	std::cout << "Running some tests:\n";
 	Test1();
-	
+	std::cout<< "Finished tests.";
+	PrintMemoryUsage();
 	
 	_CrtDumpMemoryLeaks();
 	std::cin.get();

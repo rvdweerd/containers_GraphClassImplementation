@@ -12,10 +12,9 @@ public:
 	{
 		Node(long long int n)
 			:
-			id(n)
+			id(n),
+			coord({ n>>32, (n<<32)>>32 })
 		{
-			coord.first = n >> 32;
-			coord.second = (n << 32) >> 32;
 			name = "(" + std::to_string(coord.first) + "," + std::to_string(coord.second) + ")";
 		}
 		std::string name;
