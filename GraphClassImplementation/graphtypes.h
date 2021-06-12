@@ -38,7 +38,17 @@ public:
 	};
 public:
 	SimpGraph() = default;
-	~SimpGraph() = default;
+	~SimpGraph() {
+		for (auto n : nodes) {
+			delete n;
+			n = nullptr;
+		}
+		for (auto a : arcs) {
+			delete a;
+			a = nullptr;
+		}
+
+	};
 	void AddNode(std::pair<long long int, long long int> pos);
 	void AddNode(long long int id);
 	void AddArc(Node* start, Node* finish, int cost);

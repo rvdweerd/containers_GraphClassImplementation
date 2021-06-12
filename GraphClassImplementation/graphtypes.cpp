@@ -100,7 +100,7 @@ void SimpGraph::BFS(Node* startnode)
 	visitUsingBFS();
 }
 
-void SimpGraph::VisitFunction1(Node* node)
+void SimpGraph::VisitedFunction(Node* node)
 {
 	std::cout << node->name << " visited.\n";
 }
