@@ -1,12 +1,10 @@
-#include "graphtypes.h"
+#include "SimpleGraph.h"
 #include <iostream>
 #include <crtdbg.h>  
 #define _CRTDBG_MAP_ALLOC  
 
-void Initialize(SimpGraph& graph)
+void InitializeAsGrid(SimpGraph& graph, int width=3, int height=3)
 {
-	int width = 7;
-	int height = 7;
 	for (int x = 0; x < width;x++) {
 		for (int y = 0; y < height; y++) {
 			graph.AddNode({ x,y });
@@ -38,7 +36,7 @@ void Initialize(SimpGraph& graph)
 
 void Test1() {
 	SimpGraph graph;
-	Initialize(graph);
+	InitializeAsGrid(graph,7,7);
 
 	std::cout << "\nPrinting the adjacency list\n";
 	graph.PrintAdjacencyList();
@@ -51,6 +49,11 @@ void Test1() {
 		n += a->cost;
 	}
 	std::cout << "total distance: " << n;
+	
+	std::cout << "\n\nRemoving all obstacles...";
+	graph.RemoveAllObstacles();
+	std::cout << "\nPrinting the adjacency list\n";
+	graph.PrintAdjacencyList();
 }
 
 int main()

@@ -38,6 +38,7 @@ void SimpGraph::AddOneWayConnection(std::pair<long long int, long long int> n1, 
 	}
 	AddArc(nodeMap[id1], nodeMap[id2], c);
 }
+
 void SimpGraph::AddTwoWayConnection(std::pair<long long int, long long int> n1, std::pair<long long int, long long int> n2, int c)
 {
 	long long int id1 = n1.first << 32 | n1.second;
@@ -98,11 +99,6 @@ void SimpGraph::BFS(Node* startnode)
 	tovisit.push(startnode);
 	visited.insert(startnode);
 	visitUsingBFS();
-}
-
-void SimpGraph::VisitedPrintFunction(Node* node)
-{
-	std::cout << node->name << " visited.\n";
 }
 
 std::vector<SimpGraph::Arc*> SimpGraph::findShortestPath(Node* start, Node* finish)
@@ -181,9 +177,20 @@ void SimpGraph::visitUsingBFS()
 	return;
 }
 
+void SimpGraph::VisitedPrintFunction(Node* node)
+{
+	std::cout << node->name << " visited.\n";
+}
+
 void SimpGraph::PlaceObstacle(std::pair<long long int, long long int> n) {
 	long long int id = (n.first << 32) | n.second;
 	for (auto e : nodeMap[id]->arcs) {
 		e->cost = 100;
+	}
+}
+
+void SimpGraph::RemoveAllObstacles() {
+	for (auto e : arcs) {
+		e->cost = 1;
 	}
 }

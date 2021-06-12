@@ -61,6 +61,7 @@ public:
 	void BFS(Node* startnode);
 	void VisitedPrintFunction(Node* node);
 	void PlaceObstacle(std::pair<long long int, long long int> n);
+	void RemoveAllObstacles();
 
 	struct GreaterPathLength
 	{
@@ -78,12 +79,11 @@ public:
 	std::vector<Arc*> findShortestPath(Node* start, Node* finish);
 	static int getPathCost(const std::vector<Arc*>& path);
 
-
 private:
 	void visitUsingDFS(Node* node);
 	void visitUsingBFS();
 
-public:
+private:
 	std::map<long long int, Node*> nodeMap;
 	std::set<Node*> nodes;
 	std::set<Arc*> arcs;
