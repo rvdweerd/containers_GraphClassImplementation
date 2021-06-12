@@ -3,28 +3,23 @@
 
 void Initialize(SimpGraph& graph)
 {
-	graph.AddNode("Atlanta");
-	graph.AddNode("Boston");
-	graph.AddNode("Chicago");
-	graph.AddNode("Dallas");
-	graph.AddNode("Denver");
-	graph.AddNode("Los Angeles");
-	graph.AddNode("New York");
-	graph.AddNode("Portland");
-	graph.AddNode("San Francisco");
-	graph.AddNode("Seattle");
-	graph.AddTwoWayConnection("Atlanta", "Chicago", 599);
-	graph.AddTwoWayConnection("Atlanta", "Dallas", 725);
-	graph.AddTwoWayConnection("Atlanta", "New York", 756);
-	graph.AddTwoWayConnection("Boston", "New York", 191);
-	graph.AddTwoWayConnection("Boston", "Seattle", 2489);
-	graph.AddTwoWayConnection("Chicago", "Denver", 907);
-	graph.AddTwoWayConnection("Dallas", "Denver", 650);
-	graph.AddTwoWayConnection("Dallas", "Los Angeles", 1240);
-	graph.AddTwoWayConnection("Dallas", "San Francisco", 1468);
-	graph.AddTwoWayConnection("Denver", "San Francisco", 954);
-	graph.AddTwoWayConnection("Portland", "San Francisco", 550);
-	graph.AddTwoWayConnection("Portland", "Seattle", 130);
+	int width = 3;
+	int height = 3;
+	for (int x = 0; x < width;x++) {
+		for (int y = 0; y < height; y++) {
+			graph.AddNode({ x,y });
+		}
+	}
+	for (int x = 0; x < width; x++) {
+		for (int y = 0; y < height-1; y++) {
+			graph.AddTwoWayConnection({ x,y }, { x, y + 1 },1);
+		}
+	}
+	for (int y = 0; y < height; y++) {
+		for (int x = 0; x < width- 1; x++) {
+			graph.AddTwoWayConnection({ x,y }, { x+1, y }, 1);
+		}
+	}
 }
 
 int main()
@@ -36,30 +31,32 @@ int main()
 
 	std::cout << "\nPrinting the adjacency list\n";
 	graph.PrintAdjacencyList();
-
-	std::cout << "\nTraversing BFS, starting at Boston\n";
-	graph.BFS("Boston");
-
-	std::cout << "\nTraversing DFS, starting at Boston\n";
-	graph.DFS("Boston");
-
-	std::cout << "\nFinding shortest path from Denver to Atlanta\n";
-	int n = 0;
-	for (auto a : graph.findShortestPath("Denver", "Atlanta"))
-	{
-		std::cout << a->start->name << " -> " << a->finish->name << " (" << a->cost << ")\n";
-		n += a->cost;
-	}
-	std::cout << "total distance: " << n;
-
-	std::cout << "\n\nFinding shortest path from San Francisco to Boston\n";
-	n = 0;
-	for (auto a : graph.findShortestPath("San Francisco", "Boston"))
-	{
-		std::cout << a->start->name << " -> " << a->finish->name << " (" << a->cost << ")\n";
-		n += a->cost;
-	}
-	std::cout << "total distance: " << n;
 	
+	std::cout << "\nTraversing BFS, starting at (0,0)\n";
+	graph.BFS({ 0,0 });
+
+	std::cout << "\nTraversing DFS, starting at (0,0)\n";
+	graph.DFS({ 0,0 });
+
+	std::cout << "\nFinding shortest path from (0,1) to (2,1)\n";
+	int n = 0;
+	for (auto a : graph.findShortestPath({0,1}, {2,1}))
+	{
+		std::cout << a->start->name << " -> " << a->finish->name << " (" << a->cost << ")\n";
+		n += a->cost;
+	}
+	std::cout << "total distance: " << n;
+
+	// Place obstacle on (1,1)
+	graph.PlaceObstacle({ 1,1 });
+	std::cout << "\nFinding shortest path from (0,1) to (2,1)\n";
+	n = 0;
+	for (auto a : graph.findShortestPath({ 0,1 }, { 2,1 }))
+	{
+		std::cout << a->start->name << " -> " << a->finish->name << " (" << a->cost << ")\n";
+		n += a->cost;
+	}
+	std::cout << "total distance: " << n;
+		
 	std::cin.get();
 }

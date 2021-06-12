@@ -2,10 +2,18 @@
 #include <iostream>
 #include <queue>
 
-void SimpGraph::AddNode(std::string name)
+void SimpGraph::AddNode(std::pair<long long int, long long int> pos)
 {
-	Node* newnode = new Node(name);
-	nodeMap[name] = newnode;
+	long long int id = (pos.first<<32) | pos.second;
+	Node* newnode = new Node(id);
+	nodeMap[id] = newnode;
+	nodes.insert(newnode);
+}
+
+void SimpGraph::AddNode(long long int id)
+{
+	Node* newnode = new Node(id);
+	nodeMap[id] = newnode;
 	nodes.insert(newnode);
 }
 
@@ -16,50 +24,55 @@ void SimpGraph::AddArc(Node* start, Node* finish, int cost)
 	arcs.insert(newarc);
 }
 
-void SimpGraph::AddOneWayConnection(std::string n1, std::string n2, int c)
+void SimpGraph::AddOneWayConnection(std::pair<long long int, long long int> n1, std::pair<long long int, long long int> n2, int c)
 {
-	if (nodeMap.find(n1) == nodeMap.end())
+	long long int id1 = n1.first << 32 | n1.second;
+	long long int id2 = n2.first << 32 | n2.second;
+	if (nodeMap.find(id1) == nodeMap.end())
 	{
-		AddNode(n1);
+		AddNode(id1);
 	}
-	if (nodeMap.find(n2) == nodeMap.end())
+	if (nodeMap.find(id2) == nodeMap.end())
 	{
-		AddNode(n2);
+		AddNode(id2);
 	}
-	AddArc(nodeMap[n1], nodeMap[n2], c);
+	AddArc(nodeMap[id1], nodeMap[id2], c);
 }
-void SimpGraph::AddTwoWayConnection(std::string n1, std::string n2, int c)
+void SimpGraph::AddTwoWayConnection(std::pair<long long int, long long int> n1, std::pair<long long int, long long int> n2, int c)
 {
-	if (nodeMap.find(n1) == nodeMap.end())
+	long long int id1 = n1.first << 32 | n1.second;
+	long long int id2 = n2.first << 32 | n2.second;
+	if (nodeMap.find(id1) == nodeMap.end())
 	{
-		AddNode(n1);
+		AddNode(id1);
 	}
-	if (nodeMap.find(n2) == nodeMap.end())
+	if (nodeMap.find(id2) == nodeMap.end())
 	{
-		AddNode(n2);
+		AddNode(id2);
 	}
-	AddArc(nodeMap[n1], nodeMap[n2], c);
-	AddArc(nodeMap[n2], nodeMap[n1], c);
+	AddArc(nodeMap[id1], nodeMap[id2], c);
+	AddArc(nodeMap[id2], nodeMap[id1], c);
 }
 
 void SimpGraph::PrintAdjacencyList()
 {
 	for (Node* n : nodes)
 	{
-		std::cout << n->name << " (" << n->arcs.size() << ") -> ";
+		std::cout << n->id << " (" << n->arcs.size() << ") -> ";
 		for (Arc* a : n->arcs)
 		{
-			std::cout << a->finish->name << "(" << a->cost << "),";
+			std::cout << a->finish->id << "(" << a->cost << "),";
 		}
 		std::cout << std::endl;
 	}
 }
 
-void SimpGraph::DFS(std::string startname)
+void SimpGraph::DFS(std::pair<long long int, long long int> startcell)
 {
-	if (nodeMap.find(startname) != nodeMap.end())
+	long long int id = startcell.first << 32 | startcell.second;
+	if (nodeMap.find(id) != nodeMap.end())
 	{
-		DFS(nodeMap[startname]);
+		DFS(nodeMap[id]);
 	}
 }
 
@@ -69,11 +82,12 @@ void SimpGraph::DFS(Node* startnode)
 	visitUsingDFS(startnode);
 }
 
-void SimpGraph::BFS(std::string startname)
+void SimpGraph::BFS(std::pair<long long int, long long int> startcell)
 {
-	if (nodeMap.find(startname) != nodeMap.end())
+	long long int id = startcell.first << 32 | startcell.second;
+	if (nodeMap.find(id) != nodeMap.end())
 	{
-		BFS(nodeMap[startname]);
+		BFS(nodeMap[id]);
 	}
 }
 
@@ -95,15 +109,15 @@ std::vector<SimpGraph::Arc*> SimpGraph::findShortestPath(Node* start, Node* fini
 {
 	std::vector<Arc*> path;
 	std::priority_queue< std::vector<Arc*>, std::vector<std::vector<Arc*>>, GreaterPathLength> queue;
-	std::map<std::string, int> fixed;
+	std::map<long long int, int> fixed;
 	while (start != finish)
 	{
-		if (fixed.find(start->name) == fixed.end())
+		if (fixed.find(start->id) == fixed.end())
 		{
-			fixed[start->name] = getPathCost(path);
+			fixed[start->id] = getPathCost(path);
 			for (Arc* arc : start->arcs)
 			{
-				if (fixed.find(arc->finish->name) == fixed.end())
+				if (fixed.find(arc->finish->id) == fixed.end())
 				{
 					path.push_back(arc);
 					queue.push(path);
@@ -131,8 +145,6 @@ int SimpGraph::getPathCost(const std::vector<Arc*>& path)
 	}
 	return cost;
 }
-
-
 
 void SimpGraph::visitUsingDFS(Node* node)
 {
@@ -167,4 +179,11 @@ void SimpGraph::visitUsingBFS()
 		}
 	}
 	return;
+}
+
+void SimpGraph::PlaceObstacle(std::pair<long long int, long long int> n) {
+	long long int id = (n.first << 32) | n.second;
+	for (auto e : nodeMap[id]->arcs) {
+		e->cost = 100;
+	}
 }
