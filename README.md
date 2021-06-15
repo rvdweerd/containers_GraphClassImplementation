@@ -10,3 +10,6 @@ Tests a graph of airline connections between 10 cities in the US.
 Uses the graph class to find optimal paths for robot object avoidance using cost landscapes.
 
 ![Example pathfinder](screenshot.png)
+
+Lower object density, other cost landscape parameters:
+![Example2 pathfinder](screenshot2.png)
