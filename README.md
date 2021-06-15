@@ -3,11 +3,10 @@ Own implementation of Graph data structure, traversal functions and shortest pat
 
 Based on "Programming Abstractions in C++" / Eric S. Roberts / Chapter 19.
 
-Main branch:
+* Main branch:
 Tests a graph of airline connections between 10 cities in the US.
-* SimpleGraph implementation
 
-Branch DNTGraph:
+* Branch DNTGraph:
 Uses the graph class to find optimal paths for robot object avoidance using cost landscapes.
 
 ![Example pathfinder](screenshot.png)
