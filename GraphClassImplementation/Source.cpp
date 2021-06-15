@@ -1,6 +1,7 @@
 #include "SimpleGraph.h"
 #include <iostream>
-#include <crtdbg.h>  
+#include <crtdbg.h>
+#include <random>
 #define _CRTDBG_MAP_ALLOC  
 
 struct MemoryAllocationMetrics {
@@ -12,6 +13,7 @@ struct MemoryAllocationMetrics {
 };
 
 static MemoryAllocationMetrics s_memoryAllocationMetrics;
+
 static void PrintMemoryUsage() {
 	std::cout << "Memory usage: " << s_memoryAllocationMetrics.currentMemoryUsage() << " bytes.\n";
 }
@@ -28,57 +30,41 @@ void operator delete(void* memory, size_t size)
 	free(memory);
 }
 
-void InitializeAsGrid(SimpGraph& graph, int width=3, int height=3)
-{
-	for (int x = 0; x < width;x++) {
-		for (int y = 0; y < height; y++) {
-			graph.AddNode({ x,y });
-		}
-	}
-	for (int x = 0; x < width; x++) {
-		for (int y = 0; y < height-1; y++) {
-			graph.AddTwoWayConnection({ x,y }, { x, y + 1 },1);
-		}
-	}
-	for (int y = 0; y < height; y++) {
-		for (int x = 0; x < width- 1; x++) {
-			graph.AddTwoWayConnection({ x,y }, { x+1, y }, 1);
-		}
-	}
-
-	std::vector<std::pair<long long int, long long int>> obstacles = {
-		{1,1},{2,1},{3,1},{4,1},{5,1},
-		{1,2},
-		{1,3},{4,3},{5,2},{6,3},
-		{1,4},
-		{3,5},
-		{3,6}
-	};
-	for (auto o : obstacles) {
-		graph.PlaceObstacle(o);
-	}
-}
-
 void Test1() {
-	SimpGraph graph;
-	InitializeAsGrid(graph,7,7);
-	PrintMemoryUsage();
-	std::cout << "\nPrinting the adjacency list\n";
-	graph.PrintAdjacencyList();
+	int w = 150;
+	int h = 45;
+	float density = 0.02;
+	int numObstacles = int(w * h * 0.02);
+	int obstacleHeight = 100; // height of the cost hill
+	int obstacleRadius = 5; // radius of the cost hill on the field
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<> distrX(0, w-1);
+	std::uniform_int_distribution<> distrY(0, h-1);
 
-	std::cout << "\nFinding shortest path from (0,0) to (6,6)\n";
-	int n = 0;
-	for (auto a : graph.findShortestPath({ 0,0 }, { 6,6 }))
-	{
-		std::cout << a->start->name << " -> " << a->finish->name << " (" << a->cost << ")\n";
-		n += a->cost;
+	// Instantiate the graph of the field
+	SimpGraph graph({w, h});
+	// Place random obstacles on the field
+	std::vector<std::pair<int, int>> obstacleCoordinates;
+	for (int i = 0; i < numObstacles; i++) {
+		int x = distrX(gen);
+		int y = distrY(gen);
+		obstacleCoordinates.push_back({ x,y });
 	}
-	std::cout << "total distance: " << n;
+	graph.ResetGridAndPlaceObstacleHills(obstacleCoordinates, obstacleHeight, obstacleRadius);
 	
-	std::cout << "\n\nRemoving all obstacles...";
-	graph.RemoveAllObstacles();
-	std::cout << "\nPrinting the adjacency list\n";
-	graph.PrintAdjacencyList();
+	// Run lowest cost path and display results
+	std::cout << "Field size: (w=" << w << ",h=" << h << "), " << w * h << " nodes. ";
+	PrintMemoryUsage();
+	//graph.PrintAdjacencyList();
+
+	std::vector<std::pair<long long int, long long int>> pathCoords;
+	std::vector<std::string> pathNames;
+	int totalCost = graph.findShortestPath({ 0,0 }, { w-1,h-1 }, pathCoords, pathNames);
+	
+	std::cout << "\nExample object avoidance path:" << totalCost << "\n\n";
+	graph.PlotPath(pathCoords);
+	std::cout << "\nTotal cost of avoidance path:" << totalCost << "\n\n";
 }
 
 int main()
@@ -90,10 +76,7 @@ int main()
 	_CrtSetReportMode(_CRT_ASSERT, _CRTDBG_MODE_FILE);
 	_CrtSetReportFile(_CRT_ASSERT, _CRTDBG_FILE_STDERR);
 	
-	std::cout << "Running some tests:\n";
 	Test1();
-	std::cout<< "Finished tests.";
-	PrintMemoryUsage();
 	
 	_CrtDumpMemoryLeaks();
 	std::cin.get();
