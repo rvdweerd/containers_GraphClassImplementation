@@ -9,3 +9,5 @@ Tests a graph of airline connections between 10 cities in the US.
 
 Branch DNTGraph:
 Uses the graph class to find optimal paths for robot object avoidance using cost landscapes.
+
+![Example pathfinder](screenshot.png)
