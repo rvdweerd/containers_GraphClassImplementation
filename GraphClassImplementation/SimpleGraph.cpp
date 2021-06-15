@@ -272,7 +272,11 @@ void SimpGraph::PlaceObstacleHillUsingBFS(std::pair<LL, LL> startcell, float ini
 
 void SimpGraph::PlaceObstacleHillUsingBFS(Node* startnode, float initial_cost, int hill_size)
 {
-	float cost_step = (initial_cost) / (float)hill_size;
+	// OPTION 1: linear cost decrease over distance
+	// float cost_step = (initial_cost) / (float)hill_size;
+	// OPTION 2: exponential decay
+	float cost_step = 0.85;
+
 	visited.clear();
 	while (!tovisit.empty()) tovisit.pop();
 	startnode->height = initial_cost;
@@ -290,7 +294,10 @@ void SimpGraph::priceEdgesUsingBFS(int hill_size, float cost_step)
 		tovisit.pop();
 		//VisitedPrintFunction(nextnode);
 
-		float currentCost = current_node->height - cost_step;
+		// OPTION 1: linear cost decrease
+		// float currentCost = current_node->height - cost_step;
+		// OPTION 2: exponential decay
+		float currentCost = current_node->height * cost_step;
 		for (Arc* a : current_node->arcs)
 		{
 			if (current_node->distanceToTop <= hill_size)

@@ -33,10 +33,10 @@ void operator delete(void* memory, size_t size)
 void Test1() {
 	int w = 150;
 	int h = 45;
-	float density = 0.02;
-	int numObstacles = int(w * h * 0.02);
-	int obstacleHeight = 100; // height of the cost hill
-	int obstacleRadius = 5; // radius of the cost hill on the field
+	float density = 0.002;
+	int numObstacles = int(w * h * density);
+	int obstacleHeight = 1000; // height of the cost hill
+	int obstacleRadius = 20; // radius of the cost hill on the field
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::uniform_int_distribution<> distrX(0, w-1);
