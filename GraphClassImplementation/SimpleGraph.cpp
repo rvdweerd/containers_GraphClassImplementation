@@ -17,14 +17,14 @@ void SimpGraph::AddNode(LL id)
 	nodes.insert(newnode);
 }
 
-void SimpGraph::AddArc(Node* start, Node* finish, int cost)
+void SimpGraph::AddArc(Node* start, Node* finish, float cost)
 {
 	Arc* newarc = new Arc(start, finish, cost);
 	start->arcs.insert(newarc);
 	arcs.insert(newarc);
 }
 
-void SimpGraph::AddOneWayConnection(std::pair<LL, LL> n1, std::pair<LL, LL> n2, int c)
+void SimpGraph::AddOneWayConnection(std::pair<LL, LL> n1, std::pair<LL, LL> n2, float cost)
 {
 	LL id1 = n1.first << 32 | n1.second;
 	LL id2 = n2.first << 32 | n2.second;
@@ -36,10 +36,10 @@ void SimpGraph::AddOneWayConnection(std::pair<LL, LL> n1, std::pair<LL, LL> n2, 
 	{
 		AddNode(id2);
 	}
-	AddArc(nodeMap[id1], nodeMap[id2], c);
+	AddArc(nodeMap[id1], nodeMap[id2], cost);
 }
 
-void SimpGraph::AddTwoWayConnection(std::pair<LL, LL> n1, std::pair<LL, LL> n2, int c)
+void SimpGraph::AddTwoWayConnection(std::pair<LL, LL> n1, std::pair<LL, LL> n2, float cost)
 {
 	LL id1 = n1.first << 32 | n1.second;
 	LL id2 = n2.first << 32 | n2.second;
@@ -51,8 +51,8 @@ void SimpGraph::AddTwoWayConnection(std::pair<LL, LL> n1, std::pair<LL, LL> n2, 
 	{
 		AddNode(id2);
 	}
-	AddArc(nodeMap[id1], nodeMap[id2], c);
-	AddArc(nodeMap[id2], nodeMap[id1], c);
+	AddArc(nodeMap[id1], nodeMap[id2], cost);
+	AddArc(nodeMap[id2], nodeMap[id1], cost);
 }
 
 void SimpGraph::PrintAdjacencyList()
@@ -163,11 +163,32 @@ void SimpGraph::InitializeAsGrid(std::pair<int, int> WxH)
 	}
 }
 
+void SimpGraph::InitializeAsGrid2(std::pair<int, int> WxH)
+{
+	std::vector<std::pair<int, int>> directions = { {1,0}, {0,1}, {1,1}, {1,-1} };
+	int width = WxH.first;
+	int height = WxH.second;
+	for (int x = 0; x < width; x++) {
+		for (int y = 0; y < height; y++) {
+			for (auto d : directions) {
+				if (x + d.first >= 0 && x + d.first < width && y + d.second >= 0 && y + d.second < height) {
+					if (d.first == 0 || d.second == 0) {
+						AddTwoWayConnection({ x,y }, { x + d.first,y + d.second }, 1);
+					}
+					else {
+						AddTwoWayConnection({ x,y }, { x + d.first,y + d.second }, DIAG_COST);
+					}
+				}
+			}
+		}
+	}
+}
+
 std::vector<SimpGraph::Arc*> SimpGraph::findShortestPath(Node* start, Node* finish)
 {
 	std::vector<Arc*> arcPath;
 	std::priority_queue< std::vector<Arc*>, std::vector<std::vector<Arc*>>, GreaterPathLength> queue;
-	std::map<LL, int> fixed;
+	std::map<LL, float> fixed;
 	while (start != finish)
 	{
 		if (fixed.find(start->id) == fixed.end())
@@ -194,9 +215,9 @@ std::vector<SimpGraph::Arc*> SimpGraph::findShortestPath(Node* start, Node* fini
 	return arcPath;
 }
 
-int SimpGraph::getPathCost(const std::vector<Arc*>& path)
+float SimpGraph::getPathCost(const std::vector<Arc*>& path)
 {
-	int cost = 0;
+	float cost = 0;
 	for (Arc* arc : path)
 	{
 		cost += arc->cost;
@@ -275,7 +296,7 @@ void SimpGraph::PlaceObstacleHillUsingBFS(Node* startnode, float initial_cost, i
 	// OPTION 1: linear cost decrease over distance
 	// float cost_step = (initial_cost) / (float)hill_size;
 	// OPTION 2: exponential decay
-	float cost_step = 0.85;
+	float cost_step = 0.85f;
 
 	visited.clear();
 	while (!tovisit.empty()) tovisit.pop();
@@ -318,7 +339,12 @@ void SimpGraph::priceEdgesUsingBFS(int hill_size, float cost_step)
 
 void SimpGraph::ResetGrid() {
 	for (auto e : arcs) {
-		e->cost = 1;
+		if (e->start->coord.first == e->finish->coord.first || e->start->coord.second == e->finish->coord.second) {
+			e->cost = 1.f;
+		}
+		else {
+			e->cost = DIAG_COST;
+		}
 	}
 	obstacleCenters.clear();
 }

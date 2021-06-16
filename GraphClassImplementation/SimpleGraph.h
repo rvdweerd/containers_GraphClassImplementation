@@ -4,6 +4,8 @@
 #include <map>
 #include <queue>
 
+#define DIAG_COST 1.42f
+
 class SimpGraph
 {
 private:
@@ -40,7 +42,7 @@ private:
 	};
 public:
 	SimpGraph(int width, int height) : fieldWidth_(width), fieldHeight_(height) {
-		InitializeAsGrid({ width,height });
+		InitializeAsGrid2({ width,height });
 	}
 	~SimpGraph() {
 		for (auto n : nodes) {
@@ -73,11 +75,13 @@ public:
 
 private:
 	void InitializeAsGrid(std::pair<int, int> WxH);
+	void InitializeAsGrid2(std::pair<int, int> WxH);
+
 	void AddNode(std::pair<LL, LL> pos);
 	void AddNode(LL id);
-	void AddArc(Node* start, Node* finish, int cost);
-	void AddOneWayConnection(std::pair<LL, LL> n1, std::pair<LL, LL> n2, int c);
-	void AddTwoWayConnection(std::pair<LL, LL> n1, std::pair<LL, LL> n2, int c);
+	void AddArc(Node* start, Node* finish, float cost);
+	void AddOneWayConnection(std::pair<LL, LL> n1, std::pair<LL, LL> n2, float cost);
+	void AddTwoWayConnection(std::pair<LL, LL> n1, std::pair<LL, LL> n2, float cost);
 	void PlaceObstacleCellOnly(std::pair<LL, LL> node, float cost);
 	void PlaceObstacleHillUsingBFS(std::pair<LL, LL> startcell, float initial_cost, int hill_size);
 	void PlaceObstacleHillUsingBFS(Node* startnode, float initial_cost, int hill_size);
@@ -98,7 +102,7 @@ private:
 		}
 	};
 	std::vector<Arc*> findShortestPath(Node* start, Node* finish);
-	static int getPathCost(const std::vector<Arc*>& path);
+	static float getPathCost(const std::vector<Arc*>& path);
 
 private:
 	int fieldWidth_;
