@@ -114,8 +114,9 @@ int main()
 	_CrtSetReportFile(_CRT_ASSERT, _CRTDBG_FILE_STDERR);
 	
 	//Test1();
-	for (int i = 0; i < 25; i++) {
+	for (int i = 0; i < 50; i++) {
 		Test2();
+		std::cin.get();
 	}
 	
 	_CrtDumpMemoryLeaks();
