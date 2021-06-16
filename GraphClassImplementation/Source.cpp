@@ -5,9 +5,9 @@
 #define _CRTDBG_MAP_ALLOC  
 
 struct MemoryAllocationMetrics {
-	uint32_t totalAllocated = 0;
-	uint32_t totalFreed = 0;
-	uint32_t currentMemoryUsage() {
+	size_t totalAllocated = 0;
+	size_t totalFreed = 0;
+	size_t currentMemoryUsage() {
 		return totalAllocated - totalFreed;
 	}
 };
@@ -33,9 +33,9 @@ void operator delete(void* memory, size_t size)
 void Test1() {
 	int w = 150;
 	int h = 45;
-	float density = 0.002;
+	float density = 0.002f;
 	int numObstacles = int(w * h * density);
-	int obstacleHeight = 1000; // height of the cost hill
+	float obstacleHeight = 1000; // height of the cost hill
 	int obstacleRadius = 20; // radius of the cost hill on the field
 	std::random_device rd;
 	std::mt19937 gen(rd());
@@ -60,7 +60,7 @@ void Test1() {
 
 	std::vector<std::pair<long long int, long long int>> pathCoords;
 	std::vector<std::string> pathNames;
-	int totalCost = graph.findShortestPath({ 0,0 }, { w-1,h-1 }, pathCoords, pathNames);
+	float totalCost = graph.findShortestPath({ 0,0 }, { w-1,h-1 }, pathCoords, pathNames);
 	
 	std::cout << "\nExample object avoidance path:" << totalCost << "\n\n";
 	graph.PlotPath(pathCoords);
