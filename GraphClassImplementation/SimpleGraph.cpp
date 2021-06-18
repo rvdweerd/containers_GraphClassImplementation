@@ -296,7 +296,7 @@ void SimpGraph::PlaceObstacleHillUsingBFS(Node* startnode, float initial_cost, i
 	// OPTION 1: linear cost decrease over distance
 	// float cost_step = (initial_cost) / (float)hill_size;
 	// OPTION 2: exponential decay
-	float cost_step = 0.85f;
+	float cost_step = 0.75f;
 
 	visited.clear();
 	while (!tovisit.empty()) tovisit.pop();

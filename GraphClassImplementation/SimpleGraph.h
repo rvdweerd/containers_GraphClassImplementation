@@ -72,7 +72,13 @@ public:
 		pathNames.push_back(arcPath.back()->finish->name);
 		return cost;
 	}
-
+	void AddGoalNodes() {
+		AddNode({fieldWidth_,(fieldHeight_-1)/2});
+		AddOneWayConnection({fieldWidth_-1,(fieldHeight_ - 1) / 2 }, {fieldWidth_,(fieldHeight_ - 1) / 2 },0);
+		AddOneWayConnection({ fieldWidth_ - 1,(fieldHeight_ - 1) / 2 -1}, { fieldWidth_,(fieldHeight_ - 1) / 2 }, 0);
+		AddOneWayConnection({ fieldWidth_ - 1,(fieldHeight_ - 1) / 2 +1}, { fieldWidth_,(fieldHeight_ - 1) / 2 }, 0);
+		fieldWidth_ += 1;
+	}
 private:
 	void InitializeAsGrid(std::pair<int, int> WxH);
 	void InitializeAsGrid2(std::pair<int, int> WxH);
