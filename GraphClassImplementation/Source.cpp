@@ -33,38 +33,42 @@ void operator delete(void* memory, size_t size)
 void Test1() {
 	int w = 150;
 	int h = 45;
-	float density = 0.002f;
-	int numObstacles = int(w * h * density);
-	float obstacleHeight = 1000; // height of the cost hill
-	int obstacleRadius = 8; // radius of the cost hill on the field
-	std::random_device rd;
-	std::mt19937 gen(rd());
-	std::uniform_int_distribution<> distrX(0, w-1);
-	std::uniform_int_distribution<> distrY(0, h-1);
+	for (size_t i = 1; i < 10; i++) {
+		PrintMemoryUsage();
+		float density = 0.002f*i;
+		int numObstacles = int(w * h * density);
+		float obstacleHeight = 1000; // height of the cost hill
+		int obstacleRadius = 8; // radius of the cost hill on the field
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::uniform_int_distribution<> distrX(0, w - 1);
+		std::uniform_int_distribution<> distrY(0, h - 1);
 
-	// Instantiate the graph of the field
-	SimpGraph graph({w, h});
-	// Place random obstacles on the field
-	std::vector<std::pair<int, int>> obstacleCoordinates;
-	for (int i = 0; i < numObstacles; i++) {
-		int x = distrX(gen);
-		int y = distrY(gen);
-		obstacleCoordinates.push_back({ x,y });
+		// Instantiate the graph of the field
+		SimpGraph graph({ w, h });
+		// Place random obstacles on the field
+		std::vector<std::pair<int, int>> obstacleCoordinates;
+		for (int i = 0; i < numObstacles; i++) {
+			int x = distrX(gen);
+			int y = distrY(gen);
+			obstacleCoordinates.push_back({ x,y });
+		}
+		graph.ResetGridAndPlaceObstacleHills(obstacleCoordinates, obstacleHeight, obstacleRadius);
+
+		// Run lowest cost path and display results
+		std::cout << "Field size: (w=" << w << ",h=" << h << "), " << w * h << " nodes. ";
+		PrintMemoryUsage();
+		//graph.PrintAdjacencyList();
+
+		std::vector<std::pair<long long int, long long int>> pathCoords;
+		std::vector<std::string> pathNames;
+		float totalCost = graph.findShortestPath({ 0,0 }, { w - 1,h - 1 }, pathCoords, pathNames);
+
+		std::cout << "\nExample object avoidance path:" << totalCost << "\n\n";
+		graph.PlotPath(pathCoords);
+		std::cout << "\nTotal cost of avoidance path:" << totalCost << "\n\n";
+		std::cin.get();
 	}
-	graph.ResetGridAndPlaceObstacleHills(obstacleCoordinates, obstacleHeight, obstacleRadius);
-	
-	// Run lowest cost path and display results
-	std::cout << "Field size: (w=" << w << ",h=" << h << "), " << w * h << " nodes. ";
-	PrintMemoryUsage();
-	//graph.PrintAdjacencyList();
-
-	std::vector<std::pair<long long int, long long int>> pathCoords;
-	std::vector<std::string> pathNames;
-	float totalCost = graph.findShortestPath({ 0,0 }, { w-1,h-1 }, pathCoords, pathNames);
-	
-	std::cout << "\nExample object avoidance path:" << totalCost << "\n\n";
-	graph.PlotPath(pathCoords);
-	std::cout << "\nTotal cost of avoidance path:" << totalCost << "\n\n";
 }
 
 void Test2() {
@@ -140,6 +144,7 @@ void Test3() {
 void Test4(std::vector<std::vector<std::pair<int, int>>> obstacleCoordinatesSet) {
 	// set 1: density 0.005, obsHeight 10, obsRadius 8, decay 0.75
 	//                                              50
+	PrintMemoryUsage();
 	int w = 23;
 	int h = 15;
 	// Instantiate the graph of the field
@@ -149,11 +154,11 @@ void Test4(std::vector<std::vector<std::pair<int, int>>> obstacleCoordinatesSet)
 	for (std::vector<std::pair<int, int>> obstacleCoordinates : obstacleCoordinatesSet) {
 		for (int obstacleRadius = 1; obstacleRadius < 2; obstacleRadius++) { // radius of the cost hill on the field
 			// Place obstacles on the field
-			for (int x = 0; x < w; x++) {
+			/*for (int x = 0; x < w; x++) {
 				for (int y : {1, h-1}) {
 					obstacleCoordinates.push_back({ x,y });
 				}
-			}
+			}*/
 			
 			graph.ResetGridAndPlaceObstacleHills(obstacleCoordinates, obstacleHeight, obstacleRadius);
 			
@@ -185,19 +190,22 @@ int main()
 	_CrtSetReportMode(_CRT_ASSERT, _CRTDBG_MODE_FILE);
 	_CrtSetReportFile(_CRT_ASSERT, _CRTDBG_FILE_STDERR);
 	
-	//Test1();
-	//for (int i = 0; i < 50; i++) {
-	//	Test2();
-	//	std::cin.get();
-	//}
-	std::vector<std::vector<std::pair<int, int>>> obstacleCoordinatesSet = { 
+	/*Test1();
+	for (int i = 0; i < 50; i++) {
+		Test2();
+		std::cin.get();
+	}*/
+	{
+		std::vector<std::vector<std::pair<int, int>>> obstacleCoordinatesSet = {
 		{ {15,7},{18,9},{18,4},{20,8} }, // Example 1a
 		{ {15,7},{18,9},{18,5},{20,8} }, // Example 1b
 		{ {20,5},{20,9},{17,8},{14,7} }, // Example 2
 		{ {14,9},{14,5},{17,8},{20,7} }, // Example 5
 		//{ {14,9},{14,5},{17,8},{20,7} },
-	};
-	Test4(obstacleCoordinatesSet);
-	_CrtDumpMemoryLeaks();
+		};
+		//Test1();
+		Test4(obstacleCoordinatesSet);
+	}
 	std::cin.get();
+	_CrtDumpMemoryLeaks();
 }

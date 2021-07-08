@@ -45,15 +45,18 @@ public:
 		InitializeAsGrid2({ width,height });
 	}
 	~SimpGraph() {
-		for (auto n : nodes) {
-			delete n;
-			n = nullptr;
-		}
 		for (auto a : arcs) {
 			delete a;
 			a = nullptr;
 		}
-
+		for (auto n : nodes) {
+			delete n;
+			n = nullptr;
+		}
+		nodeMap.clear();
+		arcs.clear();
+		nodes.clear();
+		visited.clear();
 	};
 	void PrintAdjacencyList();
 	void PlotPath(std::vector<std::pair<LL, LL>> path);
